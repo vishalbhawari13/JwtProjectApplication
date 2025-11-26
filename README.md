@@ -1,42 +1,50 @@
-🚀 Spring Boot JWT Authentication & Authorization (MySQL + Spring Security)
+🚀 Spring Boot JWT Authentication API
 
-A fully working JWT Authentication + Authorization system built using:
+A complete JWT Authentication & Authorization backend built with Spring Boot 4, Spring Security 7, MySQL, and JPA.
+Implements a fully secure, production-grade login/register system with token validation, password encryption, and protected routes.
 
-Spring Boot 4
+🌟 Features
+🔐 Authentication
 
-Spring Security 7
-
-JWT (jjwt 0.11.5)
-
-MySQL
-
-JPA / Hibernate
-
-BCrypt Password Hashing
-
-This project implements a clean, production-ready authentication system including:
-
-User Registration
+User Registration (Signup)
 
 User Login
+
+Password Encryption using BCrypt
 
 JWT Token Generation
 
 JWT Validation
 
-Custom JwtFilter
+🛡️ Authorization
 
-Secured APIs
+/auth/** → Public
 
-Stateless Architecture
+All other endpoints → Require JWT
 
-Input Validation
+Stateless architecture (No sessions)
 
-Clean Project Structure (Controller → Service → Repository → Entity → DTO → Security)
+Custom JwtFilter to validate token on each request
 
+🗄️ Database (MySQL)
+
+Auto table creation with Hibernate
+
+Unique email constraint
+
+Stores encrypted passwords only
+
+🧱 Tech Stack
+Layer	Technology
+Backend Framework	Spring Boot 4
+Security	Spring Security 7
+Authentication	JWT (jjwt 0.11.5)
+Database	MySQL
+ORM	Spring Data JPA
+Password Hashing	BCrypt
+Build Tool	Maven
 📁 Project Structure
 src/main/java/com.example.jwtproject
-│
 ├── controller
 │   ├── auth
 │   │   └── AuthController.java
@@ -72,76 +80,23 @@ src/main/java/com.example.jwtproject
 │
 └── JwtProjectApplication.java
 
-🛠️ Tech Stack
-Layer	Technology
-Backend	Spring Boot 4
-Security	Spring Security 7
-Auth	JWT (jjwt 0.11.5)
-Database	MySQL
-ORM	Spring Data JPA
-Password Hash	BCryptEncoder
-Build Tool	Maven
-⚙️ MySQL Configuration
-
-Add your DB config in application.properties:
-
+⚙️ Configuration
+application.properties
 spring.datasource.url=jdbc:mysql://localhost:3306/jwt_demo?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
 spring.datasource.username=root
 spring.datasource.password=your_password
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 
-🔐 Features Implemented
-✔️ User Registration
-
-Validates name, email, password
-
-Encrypts password using BCrypt
-
-Saves user in MySQL
-
-Returns JWT token
-
-✔️ Login
-
-Checks user credentials
-
-Validates password
-
-Generates JWT with:
-
-email
-
-role
-
-expiration time
-
-✔️ JWT Security
-
-Custom JwtFilter
-
-Extracts token
-
-Validates signature
-
-Loads user details
-
-Attaches authentication to SecurityContext
-
-✔️ Protected APIs
-
-Any endpoint outside /auth/** requires JWT.
-
-🔒 API Endpoints
-🔓 Public APIs (No JWT required)
-1️⃣ Register
+🔥 API Endpoints
+🔓 Public Routes (No JWT Required)
+1️⃣ Register User
 POST /auth/register
 
 
-Body:
+Request Body:
 
 {
   "name": "Vishal",
@@ -150,11 +105,11 @@ Body:
   "role": "USER"
 }
 
-2️⃣ Login
+2️⃣ Login User
 POST /auth/login
 
 
-Body:
+Request Body:
 
 {
   "email": "vishal@example.com",
@@ -162,49 +117,103 @@ Body:
 }
 
 
-Response contains:
+Response:
 
 {
-  "token": "...",
+  "token": "eyJh...",
   "tokenType": "Bearer",
   "email": "vishal@example.com",
   "role": "USER"
 }
 
-🔐 Protected API (JWT required)
+🔐 Protected Routes (JWT Required)
 3️⃣ Get Profile
 GET /user/profile
 
 
 Headers:
 
-Authorization: Bearer <your_token>
+Authorization: Bearer <jwt_token>
 
-🔄 Authentication Flow
-1️⃣ User registers → backend saves encrypted password
-2️⃣ User logs in → backend returns JWT
-3️⃣ Client stores JWT
-4️⃣ Client sends JWT in every request
-5️⃣ JwtFilter validates the token
-6️⃣ Controller executes only if token is valid
+🔄 JWT Authentication Flow
 
-Fully stateless — no sessions.
+Register: Save new user → BCrypt encrypt password
 
-🧪 Testing With Postman
-1. Register
+Login: Validate user → Create JWT
 
-→ get JWT
+Client stores token
 
-2. Login
-
-→ get new JWT
-
-3. Call /user/profile
-
-→ Must include token in header:
+Each API call uses:
 
 Authorization: Bearer <token>
 
-4. Missing or wrong token
 
-→ 401 Unauthorized (expected)
+JwtFilter validates token
+
+If valid → Request allowed
+
+If invalid/missing → 401 Unauthorized
+
+🧪 Testing (Postman)
+✔️ Register → Get Token
+✔️ Login → Get Token
+✔️ Use Token in
+Authorization: Bearer <token>
+
+✔️ Call Protected API
+✔️ Try without token → Should get 401
+✔️ Try with invalid token → Should get 403
+📌 Common Errors & Fixes
+❌ Illegal base64 character '_'
+
+Fix: Use Keys.hmacShaKeyFor(secret.getBytes())
+
+❌ No property existByEmail found
+
+Fix: Rename to:
+
+boolean existsByEmail(String email);
+
+❌ JWT token parsing error
+
+Fix: Use jjwt version 0.11.5
+
+🎯 What You Learned
+
+End-to-end JWT Security
+
+Stateless Authentication Architecture
+
+Custom Spring Security Filter
+
+Secure API Design
+
+BCrypt password hashing
+
+MySQL integration
+
+Clean Controller → Service → Repository design
+
+🛠️ Next Enhancements (Optional)
+
+You can extend this project with:
+
+🔹 Role-Based Access
+
+/admin/** → only ADMIN
+
+🔹 Refresh Tokens
+
+Long-term authentication
+
+🔹 Logout (Blacklist JWT)
+🔹 Change Password / Update Profile
+🔹 Swagger Documentation
+🔹 React.js Frontend Integration
+🤝 Contributing
+
+PRs and improvements are always welcome!
+
+📜 License
+
+This project is open-source under the MIT License.
