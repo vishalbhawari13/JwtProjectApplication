@@ -26,7 +26,7 @@ Stateless architecture (No sessions)
 
 Custom JwtFilter to validate token on each request
 
-🗄️ Database (MySQL)
+🗄️ Database (MySQL/Postgres)
 
 Auto table creation with Hibernate
 
